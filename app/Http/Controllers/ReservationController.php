@@ -26,17 +26,28 @@ class ReservationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required',
-            'product_id' => 'required',
-            'date_debut' => 'required',
-            'date_fin' => 'required'
-        ]);
+{
+    $request->validate([
+        'user_id' => 'required',
+        'product_id' => 'required',
+        'date_debut' => 'required|date',
+        'date_fin' => [
+            'required',
+            'date',
+            function ($attribute, $value, $fail) use ($request) {
+                $date_debut = $request->input('date_debut');
+                if (strtotime($value) <= strtotime($date_debut)) {
+                    $fail('La date de fin doit être postérieure à la date de début.');
+                }
+            },
+        ],
+    ]);
 
-        $reservation = Reservation::create($request->all());
-        return response()->json($reservation, 201);
-    }
+    $reservation = Reservation::create($request->all());
+    return response()->json($reservation, 201);
+}
+
+    
 
     /**
      * Display the specified resource.

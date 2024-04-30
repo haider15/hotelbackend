@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,14 @@ use App\Http\Controllers\ReservationController;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/getall', [AuthController::class, 'getAllUsers']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::get('/products/search/{name}', [ProductController::class, 'search']);
-
+Route::get('/products/get/{activity}', [ProductController::class, 'getProductsByActivity']);
+Route::post('/login/admin', [AdminController::class, 'login']);
+Route::post('/register/admin', [AdminController::class, 'store']);
 // Routes pour les activités
 Route::get('/activities', [ActivityController::class, 'index']);
 Route::get('/activities/{id}', [ActivityController::class, 'show']);
@@ -37,7 +41,11 @@ Route::post('/products', [ProductController::class, 'store']);
 Route::post('/activities', [ActivityController::class, 'store']);
  Route::put('/activities/{id}', [ActivityController::class, 'update']);
  Route::delete('/activities/{id}', [ActivityController::class, 'destroy']);
- 
+ Route::get('/reservations', [ReservationController::class, 'index']);
+  Route::post('/reservations', [ReservationController::class, 'store']);
+  Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+  Route::put('/reservations/{id}', [ReservationController::class, 'update']);
+  Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
    
@@ -47,11 +55,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
  
 
   // Routes pour les réservations
-  Route::get('/reservations', [ReservationController::class, 'index']);
-  Route::post('/reservations', [ReservationController::class, 'store']);
-  Route::get('/reservations/{id}', [ReservationController::class, 'show']);
-  Route::put('/reservations/{id}', [ReservationController::class, 'update']);
-  Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+  
 });
 
 

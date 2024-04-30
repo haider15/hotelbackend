@@ -33,36 +33,41 @@ class AuthController extends Controller
     }
 
     public function login(Request $request) {
-        $fields = $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string'
-        ]);
+    $fields = $request->validate([
+        'email' => 'required|string',
+        'password' => 'required|string'
+    ]);
 
-        // Check email
-        $user = User::where('email', $fields['email'])->first();
+    // Check email
+    $user = User::where('email', $fields['email'])->first();
 
-        // Check password
-        if(!$user || !Hash::check($fields['password'], $user->password)) {
-            return response([
-                'message' => 'Bad creds'
-            ], 401);
-        }
-
-        $token = $user->createToken('myapptoken')->plainTextToken;
-        echo" $token";
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response($response, 201);
+    // Check password
+    if(!$user || !Hash::check($fields['password'], $user->password)) {
+        return response([
+            'message' => 'Bad creds'
+        ], 401);
     }
 
-    public function logout(Request $request) {
-        auth()->user()->tokens()->delete();
+    // Store user ID in localStorage
+    $userId = $user->id;
+    session(['userId' => $userId]);
 
-        return [
-            'message' => 'Logged out'
-        ];
+    $token = $user->createToken('myapptoken')->plainTextToken;
+    $response = [
+        'user' => $user,
+        'token' => $token
+    ];
+
+    return response()->json([
+        'user' => $user,
+        'token' => $token,
+        'userId' => $user->id // Assurez-vous que l'ID utilisateur est inclus dans la réponse
+    ], 201);
+}
+
+
+    function getAllUsers() {
+        $users = User::all();
+        return $users;
     }
 }

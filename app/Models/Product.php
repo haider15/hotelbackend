@@ -12,7 +12,8 @@ class Product extends Model
     protected $fillable = [
         'name',
         'adresse',
-        'activity_id'
+        'activity_id',
+        'image'
     ];
 
     public function activity()

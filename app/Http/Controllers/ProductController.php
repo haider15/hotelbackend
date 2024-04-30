@@ -81,4 +81,36 @@ class ProductController extends Controller
     {
         return Product::where('name', 'like', '%'.$name.'%')->get();
     }
+    public function getProductsByActivity(Request $request)
+    {
+        // Valider l'ID de l'activité
+        $request->validate([
+            'activity_id' => 'required|exists:activities,id'
+        ]);
+
+        // Récupérer l'ID de l'activité depuis la requête
+        $activityId = $request->activity_id;
+
+        // Récupérer les produits associés à l'activité
+        $products = Product::where('activity_id', $activityId)->get();
+
+        return response()->json($products);
+    }
+
+    public function getProductsByActivityName($activityName)
+    {
+        // Rechercher l'activité par son nom
+        $activity = Activity::where('name', $activityName)->first();
+
+        // Vérifier si l'activité existe
+        if (!$activity) {
+            return response()->json(['message' => 'Activity not found'], 404);
+        }
+
+        // Récupérer les produits associés à l'activité
+        $products = Product::where('activity_id', $activity->id)->get();
+
+        return response()->json($products);
+    }
+
 }
